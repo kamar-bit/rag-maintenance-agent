@@ -1,7 +1,9 @@
-from rag_maintenance_agent.hello import saluer
-from rag_maintenance_agent.hello import filtre_urgent
+from rag_maintenance_agent.hello import saluer,filtre_urgent,filtrer_par_mot
 
+tickets=["c'est urgent wesh","en panne, Urgent !","ça fonctionne mal","hey,urgent","ça ralenti la prod","panne","lent","cassé"]
 def test_saluer():
     assert saluer("Maintenance") == "Bonjour, Maintenance, Bienvenue sur le projet ! "
 def test_filter():
-    assert filtre_urgent(["c'est urgent","en panne, urgent !","ça fonctionne mal","urgent","ça ralenti la prod","panne","lent","cassé"]) == ["c'est urgent","en panne, urgent !","urgent"]
+    assert filtre_urgent(tickets) == ["c'est urgent wesh","en panne, Urgent !","hey,urgent"]
+def test_filtrer_par_mot():
+    assert filtrer_par_mot(tickets,"Urgent",casse=True) == ["en panne, Urgent !"]
