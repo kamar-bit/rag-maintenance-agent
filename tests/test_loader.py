@@ -1,4 +1,4 @@
-from rag_maintenance_agent.loader import DocumentLoadError,charger_texte
+from rag_maintenance_agent.ingest.loader import DocumentLoadError,charger_texte
 import pytest
 
 def test_fichier_absent(tmp_path):
