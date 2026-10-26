@@ -7,7 +7,9 @@ authors = [
     { name = "kamar-sofiane-abdelhamid", email = "120564867+kamar-bit@users.noreply.github.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pydantic-settings>=2.16.1",
+]
 
 [project.scripts]
 rag-maintenance-agent = "rag_maintenance_agent:main"

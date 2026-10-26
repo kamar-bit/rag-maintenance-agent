@@ -1,6 +1,8 @@
 import logging 
+from rag_maintenance_agent.config import get_settings
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=get_settings().log_level,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s"
 )
 def main() -> None:
