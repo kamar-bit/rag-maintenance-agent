@@ -10,30 +10,61 @@ class DocumentLoadError(Exception):
 
 logger=logging.getLogger(__name__)
 
-def _lire_texte(chemin:Path)->Document:
-    """En utilise lire texte pour les fichier .txt et .md """
-    contenu=chemin.read_text(encoding="utf-8") 
+
+def _lire_texte(chemin: Path) -> Document:
+    contenu = None
+    encodages = ("utf-8", "utf-8-sig", "cp1252")
+
+    for encodage in encodages:
+        try:
+            contenu = chemin.read_text(encoding=encodage)
+            if encodage != "utf-8":
+                logger.warning(
+                    "Encodage de remplacement utilisé pour %s : %s",
+                    chemin,
+                    encodage,
+                )
+            break
+        except UnicodeDecodeError:
+            continue
+
+    if contenu is None:
+        raise DocumentLoadError(
+            f"Impossible de décoder le fichier avec les encodages pris en charge : {chemin}"
+        )
+
     if not contenu.strip():
-        logger.error("Fichier vide : %s", chemin)
-        raise DocumentLoadError(f"le fichier est vide {chemin}")  
-    
+        raise DocumentLoadError(f"Le fichier est vide : {chemin}")
+
     return Document(
         contenu=contenu,
         source=chemin,
-        #lstrip retire le point au debut donc ex format=txt
         format=chemin.suffix.lower().lstrip("."),
-    ) 
+    )
 
 
-def _lire_pdf(chemin:Path)->Document:
-    lecteur=PdfReader(chemin)
-    pages=[
-        # au cas ou la page est vide extract text renvoie None 
-        #en ramplace le none par "" pour pouvoir rassembler les pages
-        #sans errerus 
-        page.extract_text(extraction_mode="layout") or "" for page in lecteur.pages
-    ] 
-    contenu = "\n".join(pages).strip()  
+def _lire_pdf(chemin: Path) -> Document:
+    try:
+        lecteur = PdfReader(chemin)
+
+        if lecteur.is_encrypted:
+            raise DocumentLoadError(
+                f"PDF protégé par mot de passe : {chemin}"
+            )
+
+        pages = [
+            page.extract_text(extraction_mode="layout") or ""
+            for page in lecteur.pages
+        ]
+
+        contenu = "\n".join(pages).strip()
+
+    except PdfReadError as e:
+        logger.warning("Impossible de lire le PDF %s : %s", chemin, e)
+        raise DocumentLoadError(
+            f"PDF corrompu ou illisible : {chemin}"
+        ) from e
+
     if not contenu:
         logger.warning(
             "Aucun texte extractible dans le PDF : %s",
@@ -42,7 +73,7 @@ def _lire_pdf(chemin:Path)->Document:
         raise DocumentLoadError(
             f"PDF vide ou scanné : aucun texte extractible dans {chemin}"
         )
-    
+
     return Document(
         contenu=contenu,
         source=chemin,
@@ -71,11 +102,12 @@ def charger_document(chemin: Path) -> Document:
 
     try:
         document = lecteur(chemin)
-    except (FileNotFoundError, UnicodeDecodeError, PdfReadError) as e:
+    except (FileNotFoundError, PdfReadError) as e:
         logger.error("Échec du chargement : %s", chemin, exc_info=True)
         raise DocumentLoadError(
             f"Impossible de charger le document : {chemin}"
         ) from e
+    
 
     logger.info("Document chargé : %s", chemin)
     return document
@@ -89,6 +121,7 @@ def charger_dossier(dossier: Path) -> RapportChargement:
             continue
 
         if chemin.suffix.lower() not in {".txt", ".md", ".pdf"}:
+            logger.warning(f"Format non pris en charge, fichier ignoré:{chemin}")
             continue
 
         try:
