@@ -1,0 +1,34 @@
+GLOSSAIRE DE MAINTENANCE INDUSTRIELLE
+
+1. Maintenance préventive
+La maintenance préventive regroupe les opérations planifiées pour réduire le risque de panne. Elle peut inclure le nettoyage, la lubrification, l'inspection visuelle et le remplacement périodique de certaines pièces.
+
+2. Maintenance corrective
+La maintenance corrective intervient après la détection d'une panne. Son objectif est de remettre l'équipement en état de fonctionnement en identifiant et en corrigeant la cause du problème.
+
+3. Roulement mécanique
+Un roulement permet de guider la rotation d'un arbre tout en réduisant les frottements. Un bruit inhabituel, une température excessive ou des vibrations peuvent indiquer une dégradation du roulement.
+
+4. Lubrification
+La lubrification consiste à appliquer un lubrifiant adapté pour réduire les frottements et l'usure entre les pièces en mouvement. Le type de lubrifiant et la fréquence d'application doivent respecter les recommandations du fabricant.
+
+5. Vibration anormale
+Une vibration inhabituelle peut être causée par un désalignement, un déséquilibre, un roulement endommagé ou une fixation desserrée. Il faut examiner l'équipement selon une procédure de diagnostic adaptée.
+
+6. Arrêt d'urgence
+L'arrêt d'urgence permet d'arrêter une machine en situation dangereuse. Il ne remplace pas les procédures de consignation nécessaires avant une intervention de maintenance.
+
+7. Consignation
+La consignation consiste à isoler les sources d'énergie d'un équipement, à empêcher sa remise en marche et à vérifier l'absence d'énergie dangereuse avant toute intervention.
+
+8. Compresseur industriel
+Un compresseur augmente la pression d'un gaz, généralement de l'air. Les opérations d'entretien peuvent inclure la vérification des filtres, des fuites, de la température et du niveau de lubrifiant selon le modèle.
+
+9. Convoyeur industriel
+Un convoyeur transporte des produits ou des matériaux d'un point à un autre. Les inspections peuvent porter sur la bande, les rouleaux, les moteurs, les dispositifs de protection et les éléments de transmission.
+
+10. Pompe industrielle
+Une pompe transfère un liquide à l'aide d'un mécanisme hydraulique. Une fuite, un débit insuffisant, des vibrations ou une surchauffe peuvent signaler un problème nécessitant un diagnostic.
+
+RAPPEL DE SÉCURITÉ
+Toute opération de maintenance doit respecter les procédures de sécurité du site et les instructions du fabricant. Ne jamais intervenir sur une machine en mouvement ou sous énergie dangereuse.
