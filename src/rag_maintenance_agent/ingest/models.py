@@ -9,3 +9,8 @@ class Document:
     source: Path
     format: str
     metadata: dict[str, str | int] = field(default_factory=dict)
+
+@dataclass(frozen=True)
+class RapportChargement:
+    documents: list[Document]
+    echecs: dict[Path, str]

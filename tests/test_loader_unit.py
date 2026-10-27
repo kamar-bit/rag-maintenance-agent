@@ -1,5 +1,6 @@
-from rag_maintenance_agent.ingest.loader import DocumentLoadError,charger_document
+from rag_maintenance_agent.ingest.loader import DocumentLoadError,charger_document,charger_dossier
 import rag_maintenance_agent.ingest.loader as loader
+from rag_maintenance_agent.ingest.models import Document
 import pytest
 
 
@@ -27,7 +28,7 @@ def test_charger_fichier_pdf(tmp_path, monkeypatch):
     fichier.write_bytes(b"faux contenu PDF")
 
     class FaussePage:
-        def extract_text(self):
+        def extract_text(self, extraction_mode=None):
             return "Vérifier la pression."
 
     class FauxLecteurPDF:
@@ -63,4 +64,28 @@ def test_fichier_inexistant(tmp_path):
     with pytest.raises(DocumentLoadError, match="Impossible de charger"):
         charger_document(fichier)
 
+
+def test_charger_dossier_continue_apres_echec(tmp_path, monkeypatch):
+    fichier_ok = tmp_path / "bon.txt"
+    fichier_erreur = tmp_path / "mauvais.txt"
+
+    fichier_ok.write_text("Moteur vérifié", encoding="utf-8")
+    fichier_erreur.write_text("Contenu problématique", encoding="utf-8")
+
+    def faux_charger_document(chemin):
+        if chemin == fichier_erreur:
+            raise DocumentLoadError("Erreur de lecture")
+        return Document(
+            contenu="Moteur vérifié",
+            source=chemin,
+            format="txt",
+        )
+
+    monkeypatch.setattr(loader, "charger_document", faux_charger_document)
+
+    rapport = charger_dossier(tmp_path)
+
+    assert len(rapport.documents) == 1
+    assert rapport.documents[0].source == fichier_ok
+    assert rapport.echecs == {fichier_erreur: "Erreur de lecture"}
 

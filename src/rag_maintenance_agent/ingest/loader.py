@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
-from rag_maintenance_agent.ingest.models import Document
+from rag_maintenance_agent.ingest.models import Document ,RapportChargement
 
 
 class DocumentLoadError(Exception):
@@ -58,6 +58,8 @@ LECTEURS = {
     ".pdf": _lire_pdf,
 }
 
+
+
 def charger_document(chemin: Path) -> Document:
     lecteur = LECTEURS.get(chemin.suffix.lower())
 
@@ -78,3 +80,24 @@ def charger_document(chemin: Path) -> Document:
     logger.info("Document chargé : %s", chemin)
     return document
 
+def charger_dossier(dossier: Path) -> RapportChargement:
+    documents = []
+    echecs = {}
+
+    for chemin in dossier.rglob("*"):
+        if not chemin.is_file():
+            continue
+
+        if chemin.suffix.lower() not in {".txt", ".md", ".pdf"}:
+            continue
+
+        try:
+            document = charger_document(chemin)
+            documents.append(document)
+        except DocumentLoadError as e:
+            echecs[chemin] = str(e)
+
+    return RapportChargement(
+        documents=documents,
+        echecs=echecs,
+    )
