@@ -3,6 +3,7 @@ from pathlib import Path
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 from rag_maintenance_agent.ingest.models import Document ,RapportChargement
+from rag_maintenance_agent.config import get_settings
 
 
 class DocumentLoadError(Exception):
@@ -91,6 +92,7 @@ LECTEURS = {
 
 
 
+
 def charger_document(chemin: Path) -> Document:
     lecteur = LECTEURS.get(chemin.suffix.lower())
 
@@ -101,16 +103,33 @@ def charger_document(chemin: Path) -> Document:
         )
 
     try:
+        taille_octets = chemin.stat().st_size
+        taille_mb = taille_octets / (1024 * 1024)
+        limite_mb = get_settings().max_file_mb
+
+        if taille_mb > limite_mb:
+            logger.warning(
+                "Fichier trop volumineux : %s (%.2f Mo, limite : %s Mo)",
+                chemin,
+                taille_mb,
+                limite_mb,
+            )
+            raise DocumentLoadError(
+                f"Fichier trop volumineux : {chemin} "
+                f"({taille_mb:.2f} Mo, limite : {limite_mb} Mo)"
+            )
+
         document = lecteur(chemin)
+
     except (FileNotFoundError, PdfReadError) as e:
         logger.error("Échec du chargement : %s", chemin, exc_info=True)
         raise DocumentLoadError(
             f"Impossible de charger le document : {chemin}"
         ) from e
-    
 
     logger.info("Document chargé : %s", chemin)
     return document
+
 
 def charger_dossier(dossier: Path) -> RapportChargement:
     documents = []

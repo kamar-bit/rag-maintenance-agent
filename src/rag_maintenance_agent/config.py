@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     llm_api_key: SecretStr          # obligatoire : pas de défaut
     log_level: str = "INFO"
     chunk_size: int = 800
+    max_file_mb: int = 50
 @lru_cache
 def get_settings()-> Settings:
     return Settings()

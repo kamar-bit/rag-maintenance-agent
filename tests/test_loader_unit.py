@@ -140,3 +140,21 @@ def test_charger_pdf_invalide(tmp_path, monkeypatch):
 
     with pytest.raises(DocumentLoadError, match="PDF corrompu ou illisible"):
         charger_document(fichier)
+
+
+def test_charger_document_refuse_fichier_trop_volumineux(
+    tmp_path, monkeypatch
+):
+    from types import SimpleNamespace
+
+    fichier = tmp_path / "grand.txt"
+    fichier.write_text("Contenu de test", encoding="utf-8")
+
+    monkeypatch.setattr(
+        loader,
+        "get_settings",
+        lambda: SimpleNamespace(max_file_mb=0),
+    )
+
+    with pytest.raises(DocumentLoadError, match="Fichier trop volumineux"):
+        charger_document(fichier)
