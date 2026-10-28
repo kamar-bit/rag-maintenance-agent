@@ -20,6 +20,8 @@ class Chunk:
     contenu: str
     source: Path
     index:int
+    #avec le default factory on créé un nv dict individuel pour chaque chunk  
+    metadata: dict[str, str | int] = field(default_factory=dict)
     def __post_init__(self):
         if not self.contenu.strip():
             raise ValueError("Le contenu ne peut pas etre vide ")
