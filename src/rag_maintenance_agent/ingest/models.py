@@ -14,3 +14,12 @@ class Document:
 class RapportChargement:
     documents: list[Document]
     echecs: dict[Path, str]
+
+@dataclass(frozen=True)
+class Chunk:
+    contenu: str
+    source: Path
+    index:int
+    def __post_init__(self):
+        if not self.contenu.strip():
+            raise ValueError("Le contenu ne peut pas etre vide ")
